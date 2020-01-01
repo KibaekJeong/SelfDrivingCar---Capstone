@@ -41,7 +41,7 @@ class WaypointUpdater(object):
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-        rospy.Subscriber('/traffic_Waypoint', Int32, self.traffic_cb)
+#        rospy.Subscriber('/traffic_Waypoint', Int32, self.traffic_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
 
@@ -82,10 +82,10 @@ class WaypointUpdater(object):
         return closest_idx
 
     def publish_waypoints(self, closest_idx):
-        # lane = Lane()
-        # lane.header = self.base_waypoints.header
-        # lane.waypoints = self.base_waypoints.waypoints[closest_idx:closest_idx + LOOKAHEAD_WPS]
-        final_lane = self.generate_lane()
+        lane = Lane()
+        lane.header = self.base_waypoints.header
+        lane.waypoints = self.base_waypoints.waypoints[closest_idx:closest_idx + LOOKAHEAD_WPS]
+        #final_lane = self.generate_lane()
         self.final_waypoints_pub.publish(lane)
 
     def generate_lane(self):
@@ -132,11 +132,12 @@ class WaypointUpdater(object):
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
-        pas
+        pass
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
-        self.stopline_wp_idx = msg.data 
+        # self.stopline_wp_idx = msg.data 
+	pass
 
     def get_waypoint_velocity(self, waypoint):
         return waypoint.twist.twist.linear.x
