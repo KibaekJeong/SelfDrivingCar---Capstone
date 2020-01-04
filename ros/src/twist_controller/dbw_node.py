@@ -74,9 +74,8 @@ class DBWNode(object):
         self.dbw_enabled = None
         self.linear_vel = None
         self.angular_vel = None
-        self.throttle = 0
+        self.throttle = 1
         self.steering = self.brake = 0
-
         
 
         self.loop()
@@ -96,6 +95,16 @@ class DBWNode(object):
             rate.sleep()
             print(self.current_vel)
             print(self.throttle)
+
+    def dbw_enabled_cb(self, msg):
+        self.dbw_enabled = msg
+
+    def twist_cb(self, msg):
+        self.linear_vel = msg.twist.linear.x
+        self.angular_vel = msg.twist.angular.z
+  
+    def velocity_cb(self, msg):
+        self.current_vel = msg.twist.linear.x
 
     def dbw_enabled_cb(self, msg):
         self.dbw_enabled = msg
