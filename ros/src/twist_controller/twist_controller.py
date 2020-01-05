@@ -13,7 +13,7 @@ class Controller(object):
         # TODO: Implement
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
         
-        kp = 1.5 #0.3#1.5
+        kp = 1.5 #0.3
         ki = 0.0025 #0.1#0.025
         kd = 0.05 #0.0
         mn = 0. # minimum throttle value
@@ -60,7 +60,7 @@ class Controller(object):
         	throttle = 0.0
         	brake = 700 # N*m the torqe to hold carla
         elif throttle < .1 and vel_error < 0: # faster than target
-        	throttle = 0
+        	throttle = 0.0
         	decel = max(vel_error, self.decel_limit)
         	brake = min(700, abs(decel)*self.vehicle_mass*self.wheel_radius)
 
