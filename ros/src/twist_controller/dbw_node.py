@@ -109,13 +109,6 @@ class DBWNode(object):
     def dbw_enabled_cb(self, msg):
         self.dbw_enabled = msg
 
-    def twist_cb(self, msg):
-        self.linear_vel = msg.twist.linear.x
-        self.angular_vel = msg.twist.angular.z
-  
-    def velocity_cb(self, msg):
-        self.current_vel = msg.twist.linear.x
-
     def publish(self, throttle, brake, steer):
         tcmd = ThrottleCmd()
         tcmd.enable = True

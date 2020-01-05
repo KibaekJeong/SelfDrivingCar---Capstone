@@ -24,7 +24,7 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 50 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 100 # Number of waypoints we will publish. You can change this number
 MAX_DECEL =  .5
 
 class WaypointUpdater(object):
@@ -41,7 +41,6 @@ class WaypointUpdater(object):
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-
         rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
@@ -49,20 +48,10 @@ class WaypointUpdater(object):
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
-
-        # TODO: Add other member variables you need below
-        self.pose  = None
-        # self.base_waypoints = None
-        self.waypoints_2d = None
-        self.waypoint_tree = None
-        
-        self.base_lane = None
-        self.stopline_wp_idx = -1
-
         self.loop()
         # rospy.spin()
     def loop(self):
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(30) # Change update rate 50 to 30
         while not rospy.is_shutdown():
             if self.pose and self.base_lane:
                 self.publish_waypoints()
@@ -113,7 +102,7 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_wp_idx - closest_idx-2,0)
+            stop_idx = max(self.stopline_wp_idx - closest_idx-4,0) # Stop line margin 2 to 4
             dist = self.distance(waypoints, i,stop_idx)
             vel = math.sqrt(2 * MAX_DECEL * dist)
             if vel < 1.:
