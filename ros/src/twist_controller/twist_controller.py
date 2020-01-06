@@ -15,7 +15,7 @@ class Controller(object):
         
         kp = 0.3 # 0.3
         ki = 0.0 # 0.0
-        kd = 0.001 #0.01
+        kd = 0.001 #0.001
         mn = 0. # minimum throttle value
         mx = 0.4 # 1.0 # maximum throttle value
         
