@@ -104,7 +104,7 @@ class WaypointUpdater(object):
 
             stop_idx = max(self.stopline_wp_idx - closest_idx-4,0) # Stop line margin 2 to 4
             dist = self.distance(waypoints, i,stop_idx)
-            vel = math.sqrt(2 * MAX_DECEL * dist)
+            vel = math.sqrt( 3 * MAX_DECEL * dist)
             if vel < 1.:
                 vel = 0.
 
