@@ -14,7 +14,7 @@ class Controller(object):
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
 
         self.throttle_controller = PID(kp=0.3, ki=0.0, kd=0.01, mn=decel_limit, mx=0.5*accel_limit)
-        self.brake_controller = PID(kp=100,ki=0.0,kd=1.0,mn=0.0,mx=3000)
+        self.brake_controller = PID(kp=30.0,ki=1.0,kd=0.5,mn=0.0,mx=700.0)
 
         tau = 0.5 # 1/(2pi*tau) = cutoff freq (?)
         ts = .02 # sample time

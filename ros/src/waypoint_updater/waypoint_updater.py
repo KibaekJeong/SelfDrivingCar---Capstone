@@ -92,9 +92,9 @@ class WaypointUpdater(object):
             lane.waypoints = base_waypoints
         else:
             lane.waypoints = self.decelerate_waypoints(base_waypoints,closest_idx)
-        
+
         return lane
-    
+
     def decelerate_waypoints(self, waypoints, closest_idx):
         temp = []
         for i, wp in enumerate(waypoints):
@@ -102,7 +102,7 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_wp_idx - closest_idx-4,0) # Stop line margin 2 to 4
+            stop_idx = max(self.stopline_wp_idx - closest_idx-5,0) # Stop line margin 2 to 4
             dist = self.distance(waypoints, i,stop_idx)
             vel = math.sqrt( 3 * MAX_DECEL * dist) + i #  math.sqrt( 2 * MAX_DECEL * dist)
             print(vel)
@@ -132,7 +132,7 @@ class WaypointUpdater(object):
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
-        # self.stopline_wp_idx = msg.data 
+        # self.stopline_wp_idx = msg.data
 	pass
 
     def get_waypoint_velocity(self, waypoint):
