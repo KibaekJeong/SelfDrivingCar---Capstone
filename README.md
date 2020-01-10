@@ -16,10 +16,15 @@ For traffic light detector uses [Single Shot MultiBox Detector](https://arxiv.or
 
 In order to maximize detection capability, transfer learning was done with two different dataset. First dataset was from Udacity. Photos of Udacity simulator and [Udacity Training Bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) provided by Udacity was used for first set. In addition, [Bosch Small Traffic Lights Dataset](https://hci.iwr.uni-heidelberg.de/node/6132) was used for training and evaluation.
 
-As result, model was able to detect all the traffic lights in Udacity simulator and Udacity on-site test images with no problem. Also, as detection timing is highly important as it is directly connected to passengers safety. Using MobileNetV2, we were able to achieve average detection time of 25ms.
+As result, the model was able to detect all the traffic lights in Udacity simulator and Udacity on-site test images with no problem. Also, as detection timing is highly important as it is directly connected to passengers safety. Using MobileNetV2, we were able to achieve average detection time of 25ms.
 
 ### Waypoint updater
-The Waypoint updater node is the main part of the planning tasks. The self driving car should follows the waypoints from the waypoint updater. The waypoint updater publishes the waypoints by keeping the center of the lane lines, speed limit and the red traffic light and the each waypoints are given with the target velocity. Hence, we have implemented the functions to generates final waypoints by using the information from base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. If the red traffic light is detected within the lookahead distance, the decelerate waypoints are calculated for the keeping the stop lines.
+The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes the waypoints by keeping track of the center of the lane lines, speed limit and the red traffic light and the each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. 
+
+To achieve smooth deccelartion at red light, we added a brake PID contorller in `twist_controller` and the below deccelrate velocity in waypoint updater. The velocity gets smaller as the car approaches to the stop line, the linear term is to ensure the velocity doesn't have a sudden drop as the distance to stop line get close to zero.
+```python
+math.sqrt(3 * MAX_DECEL * dist) + i
+```
 
 ### Drive by  Wire (DBW)
 The Drive By Wire (DBW) node is the main part of the control subsystem for throttle, brake and steering. We have implemented PID controllers for the throttle and brake.
@@ -30,6 +35,10 @@ With respect to steering values, we modified the yaw_controller for the stable l
 ```python
 steering angle = angle = atan(wheel_base * curvature) 
 ```
+
+
+
+
 
 ## Running Simulation
 Please use **one** of the two installation options, either native **or** docker installation.
