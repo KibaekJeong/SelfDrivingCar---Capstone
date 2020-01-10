@@ -1,17 +1,16 @@
 # Udacity Self-Driving Car Nanodegree: Capstone
-This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as a real car Carla. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake. 
+This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as a real car Carla. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake.
 
 ## Group Members
 * [Kibaek Jeong](https://github.com/KibaekJeong)
 * [Nuertey Duke Noi](https://github.com/dawn360)
 * [Hong Cho](https://github.com/hong9life)
-* [Shayan Salehian](https://github.com/shayan72)
 * [Shin-Ying Lu](https://github.com/shinyingl)
 
 ## ROS Nodes
 
 ### Traffic Light Detection
-The traffic light detection node is the main part of the perception sub system for following project. Traffic light detection node detects incoming traffic lights and its state. It detects state of the upcoming traffic light so that waypoint updater decides whether to stop at the traffic light or pass the traffic light. 
+The traffic light detection node is the main part of the perception sub system for following project. Traffic light detection node detects incoming traffic lights and its state. It detects state of the upcoming traffic light so that waypoint updater decides whether to stop at the traffic light or pass the traffic light.
 
 For traffic light detector uses [Single Shot MultiBox Detector](https://arxiv.org/abs/1512.02325) with feature extractor of [MobileNetV2](https://arxiv.org/abs/1801.04381). Model pretraiined with [COCO Dataset](http://cocodataset.org/), which already includes traffic light category was used for following project. Tensorflow detection model is provided in following [link](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md).
 
@@ -19,18 +18,20 @@ In order to maximize detection capability, transfer learning was done with two d
 
 As result, the model was able to detect all the traffic lights in Udacity simulator and Udacity on-site test images with no problem. Also, as detection timing is highly important as it is directly connected to passengers safety. Using MobileNetV2, we were able to achieve average detection time of 25ms.
 
+![Self Driving](./imgs/stopandgo.gif)
+
 ### Waypoint updater
-The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes waypoints ahead of the car by keeping track of the center of the lane lines, speed limit and the red traffic light and each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. 
+The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes waypoints ahead of the car by keeping track of the center of the lane lines, speed limit and the red traffic light and each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose.
 
-
+![Way Point](./imgs/waypoint.gif)
 ### Drive by  Wire (DBW)
 The Drive By Wire (DBW) node is the main part of the control subsystem for throttle, brake and steering. We have implemented PID controllers for the throttle and brake.
-Inputs for PID controller are error values between reference linear x velocity from waypoint follower and the measured current velocity. And output of PID controller is 
+Inputs for PID controller are error values between reference linear x velocity from waypoint follower and the measured current velocity. And output of PID controller is
 the throttle and brake values which are determined by the target velocity.
 
-With respect to steering values, we modified the yaw_controller for the stable lateral motion of the vehicle. We use the twist angular z from the waypint follower and steering value calculated by: 
+With respect to steering values, we modified the yaw_controller for the stable lateral motion of the vehicle. We use the twist angular z from the waypint follower and steering value calculated by:
 ```python
-steering angle = angle = atan(wheel_base * curvature) 
+steering angle = angle = atan(wheel_base * curvature)
 ```
 To achieve smooth deccelartion at red light, we added a brake PID contorller in `twist_controller` and the below deccelrate velocity in waypoint updater. The velocity gets smaller as the car approaches to the stop line, the linear term is to ensure the velocity doesn't have a sudden drop as the distance to stop line get close to zero.
 ```python
