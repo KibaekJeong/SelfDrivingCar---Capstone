@@ -3,7 +3,7 @@ This is the capstone project of Udacity's Self-driving Car Engineer nano degree.
 
 ## Group Members
 * [Kibaek Jeong](https://github.com/KibaekJeong)
-* [Duke Noi](https://github.com/dawn360)
+* [Nuertey Duke Noi](https://github.com/dawn360)
 * [Hong Cho](https://github.com/hong9life)
 * [Shayan Salehian](https://github.com/shayan72)
 * [Shin-Ying Lu](https://github.com/shinyingl)
@@ -20,7 +20,7 @@ In order to maximize detection capability, transfer learning was done with two d
 As result, the model was able to detect all the traffic lights in Udacity simulator and Udacity on-site test images with no problem. Also, as detection timing is highly important as it is directly connected to passengers safety. Using MobileNetV2, we were able to achieve average detection time of 25ms.
 
 ### Waypoint updater
-The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes the waypoints by keeping track of the center of the lane lines, speed limit and the red traffic light and the each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. 
+The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes waypoints ahead of the car by keeping track of the center of the lane lines, speed limit and the red traffic light and each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. 
 
 To achieve smooth deccelartion at red light, we added a brake PID contorller in `twist_controller` and the below deccelrate velocity in waypoint updater. The velocity gets smaller as the car approaches to the stop line, the linear term is to ensure the velocity doesn't have a sudden drop as the distance to stop line get close to zero.
 ```python
