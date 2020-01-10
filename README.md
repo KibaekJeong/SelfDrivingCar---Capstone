@@ -2,10 +2,10 @@
 This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as a real car Carla. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake.
 
 ## Group Members
-* [Kibaek Jeong](https://github.com/KibaekJeong)[jgibak@gmail.com](jgibak@gmail.com)
-* [Nuertey Duke Noi](https://github.com/dawn360)[dukayslab@gmail.com](dukayslab@gmail.com)
-* [Hong Cho](https://github.com/hong9life)[hong9life@gmail.com](hong9life@gmail.com)
-* [Shin-Ying Lu](https://github.com/shinyingl)[shinyingl@gmail.com](shinyingl@gmail.com)
+* [Kibaek Jeong](https://github.com/KibaekJeong) ([jgibak@gmail.com](jgibak@gmail.com))
+* [Nuertey Duke Noi](https://github.com/dawn360) ([dukayslab@gmail.com](dukayslab@gmail.com))
+* [Hong Cho](https://github.com/hong9life) ([hong9life@gmail.com](hong9life@gmail.com))
+* [Shin-Ying Lu](https://github.com/shinyingl) ([shinyingl@gmail.com](shinyingl@gmail.com))
 
 ## Overview
 Following repository is final code for the capstone project of [Udacity Self-Driving Car Nanodegree](https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013).
