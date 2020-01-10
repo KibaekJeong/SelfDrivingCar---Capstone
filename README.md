@@ -1,5 +1,5 @@
 # Udacity Self-Driving Car Nanodegree: Capstone
-This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as on a real car. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake. 
+This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as a real car Carla. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake. 
 
 ## Group Members
 * [Kibaek Jeong](https://github.com/KibaekJeong)
@@ -22,10 +22,6 @@ As result, the model was able to detect all the traffic lights in Udacity simula
 ### Waypoint updater
 The Waypoint updater node is the main part of the planning tasks. The self driving car should follow the waypoints from the waypoint updater. The waypoint updater publishes waypoints ahead of the car by keeping track of the center of the lane lines, speed limit and the red traffic light and each waypoints are given with the target velocity. Hence, we have implemented the functions to generate final waypoints by using base waypoints from waypoint loader node, traffic lights status from the traffic light detection node and the car pose. 
 
-To achieve smooth deccelartion at red light, we added a brake PID contorller in `twist_controller` and the below deccelrate velocity in waypoint updater. The velocity gets smaller as the car approaches to the stop line, the linear term is to ensure the velocity doesn't have a sudden drop as the distance to stop line get close to zero.
-```python
-math.sqrt(3 * MAX_DECEL * dist) + i
-```
 
 ### Drive by  Wire (DBW)
 The Drive By Wire (DBW) node is the main part of the control subsystem for throttle, brake and steering. We have implemented PID controllers for the throttle and brake.
@@ -36,6 +32,17 @@ With respect to steering values, we modified the yaw_controller for the stable l
 ```python
 steering angle = angle = atan(wheel_base * curvature) 
 ```
+To achieve smooth deccelartion at red light, we added a brake PID contorller in `twist_controller` and the below deccelrate velocity in waypoint updater. The velocity gets smaller as the car approaches to the stop line, the linear term is to ensure the velocity doesn't have a sudden drop as the distance to stop line get close to zero.
+```python
+math.sqrt(3 * MAX_DECEL * dist) + i
+```
+Below is a shows a summary how we use throttle and brake control to achieve the target speed:
+
+|Condition			        |     throttle        				| brake|
+|:---------------------:|:-------------------------------------:| :--:|
+| curreent speed < target speed     	| PID control 			| 0|
+| curreent speed > target speed     	| 0 | PID control 			|
+| current speed <0.1 & target speed = 0      	|  0| brake = 700 (torque to hold the car) 			|
 
 
 
