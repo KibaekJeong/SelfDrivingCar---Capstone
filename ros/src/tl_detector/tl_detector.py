@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Bool
 from geometry_msgs.msg import PoseStamped, Pose
 from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
@@ -22,9 +22,8 @@ class TLDetector(object):
         self.pose = None
         self.waypoints = None
         self.waypoints_2d = None
-
         self.waypoint_tree = None
-
+        self.state = TrafficLight.UNKNOWN
         self.camera_image = None
         self.lights = []
 
@@ -46,16 +45,15 @@ class TLDetector(object):
         self.config = yaml.load(config_string)
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
-
+        self.tl_detector_initialized_pub = rospy.Publisher('/tl_detector_initialized',Bool,queue_size=1)
         self.bridge = CvBridge()
         self.light_classifier = TLClassifier()
         self.listener = tf.TransformListener()
-
-        self.state = TrafficLight.UNKNOWN
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
-
+        self.tl_detector_initialized_pub.publish(Bool(True))
+        rospy.loginfo('TL Detector initialized')
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -66,7 +64,6 @@ class TLDetector(object):
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
-
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -81,7 +78,7 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
-        light_wp, state = self.process_traffic_lights()
+        light_wp, light_state = self.process_traffic_lights()
 
         '''
         Publish upcoming red lights at camera frequency.
@@ -90,12 +87,12 @@ class TLDetector(object):
         used.
         '''
         # set state count to zero and restart when traffic light state is changed
-        if self.state != state:
+        if self.state != light_state:
             self.state_count = 0
-            self.state = state
+            self.state = light_state
         elif self.state_count >= STATE_COUNT_THRESHOLD:
             self.last_state = self.state
-            if state == TrafficLight.RED  or state == TrafficLight.YELLOW:
+            if light_state == TrafficLight.RED  or light_state == TrafficLight.YELLOW:
                 light_wp = light_wp
             else: light_wp = -1
             self.last_wp = light_wp
@@ -154,24 +151,24 @@ class TLDetector(object):
         if(self.pose):
             car_position = self.get_closest_waypoint(self.pose.pose.position.x,self.pose.pose.position.y)
 
-        diff =  len(self.waypoints.waypoints)
-            #find cloesest visible traffic light
-        for i, light in enumerate(self.lights):
-                # Get stop line waypoint index
-            stop_line = stop_line_positions[i]
-            temp_wp_idx = self.get_closest_waypoint(stop_line[0],stop_line[1])
-                # Find closest stop line waypoint index
-            d = temp_wp_idx - car_position
-            if d >= 0 and d < diff:
-                diff = d
-                light_ahead = light
-                line_wp_idx = temp_wp_idx
+            diff =  len(self.waypoints.waypoints)
+                #find cloesest visible traffic light
+            if len(self.lights)>0:
+                for i, light in enumerate(self.lights):
+                            # Get stop line waypoint index
+                    stop_line = stop_line_positions[i]
+                    temp_wp_idx = self.get_closest_waypoint(stop_line[0],stop_line[1])
+                            # Find closest stop line waypoint index
+                    d = temp_wp_idx - car_position
+                    if d >= 0 and d < diff:
+                        diff = d
+                        light_ahead = light
+                        line_wp_idx = temp_wp_idx
 
         # If there is cloesest light, check state of the traffic light
         if light_ahead:
-            print("Light Detected")
             state = self.get_light_state(light_ahead)
-            print(self.tlclasses_d[state])
+            rospy.loginfo('Detected Traffic Light State {}'.format(self.tlclasses_d[state]))
             return line_wp_idx, state
         return -1, TrafficLight.UNKNOWN
 

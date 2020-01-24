@@ -29,7 +29,7 @@ class TLClassifier(object):
         #Number of detections
         self.num_detection = self.detection_graph.get_tensor_by_name('num_detections:0')
         print("Traffic Light Classifier Ready")
-        
+
     def load_graph(self,graph_file):
         graph = tf.Graph()
         with graph.as_default():
@@ -76,10 +76,10 @@ class TLClassifier(object):
         scores=np.squeeze(scores)
         classes=np.squeeze(classes).astype(np.int32)
 
-        detection_threshold=0.6
+        detection_threshold=0.3
         boxes, scores, classes = self.filter_boxes(detection_threshold, boxes, scores, classes)
 
-        if (len(scores)==0):
+        if (len(classes)==0):
             return TrafficLight.UNKNOWN
         else:
             if classes[0] == 1:
