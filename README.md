@@ -1,5 +1,5 @@
 # Udacity Self-Driving Car Nanodegree: Capstone
-![Self Driving](./imgs/test.gif width="40" height="40")
+![Self Driving](./imgs/test.gif =250x250)
 
 
 This is the capstone project of Udacity's Self-driving Car Engineer nano degree. The goal is to write codes in ROS to drive a car in a simulation, as well as a real car Carla. The car is able to detect traffic light signal and be navigated by waypoints at planned veclocity by controlling the throttle, steer, and brake.
